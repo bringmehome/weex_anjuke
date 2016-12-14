@@ -1,0 +1,164 @@
+<template>
+	<div class="rootview">
+		<div class="navication" style="flex-direction: row; height: 100; background-color: rgb(115,178,7)">
+			<div style="flex:0.3;justify-content:center;align-items:center;">
+				<text style='color: white;'>上海▼</text>
+			</div>
+			<!-- 搜索框 -->
+			<div style="flex:1;background-color: rgb(115,178,7);justify-content:center;">
+				<div style="flex-direction:row; height:70;background-color: #fff;justify-content:space-between;align-items:center;margin-left:20; margin-right:20;border-radius:5">
+					<!-- //左边是图标，右边是文字 -->
+					<div style="flex-direction: row; justify-content: center;align-items: center;margin-left: 20">
+						<image src='{{searchicon}}' style='width:30;height:30;margin-right: 20'></image>
+						<text>挑好房，上安居客</text>
+					</div>
+					<image src='{{scanicon}}' style='width:30;height:40;margin-right: 20'></image>
+				</div>
+			</div>
+			<div style="flex:0.3;flex-direction: row;justify-content: center;align-items: center;color: white;">
+				<image></image>
+				<text style='color: white;'>地图</text>
+			</div>
+		</div>
+		<scroller>
+				<div class="tab">
+					<div repeat='{{items}}' style="margin-top: 36">
+						<div style="flex-direction: row;">
+							<div repeat='{{data}}' style="flex:1">
+								<div style="justify-content:center; align-items: center;">
+									<image style='width: 90;height: 90' src='{{icon}}'></image>
+									<text style='margin-top: 10; color: #666'>{{name}}</text>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="toutiao">
+					<div style="flex-direction: row; height: 130;margin-top:36;background-color: rgb(245,252,242);justify-content: center;align-items: center;">
+						<div class="anjuke" style="flex: 0.3;justify-content: center;align-items: center;">
+							<image style='width: 110; height: 32' src='{{ajkurl}}'></image>
+						</div>
+						<div style="width: 1;height: 80; background-color: #999;"></div>
+						<div style="flex:1">
+							<wxc-marquee id="marquee" style="width: 700; height: {{marquee.height * 2}}; border-radius: 8; padding-left: 30; padding-right: 10;" step="{{marquee.height * 2}}" count="{{marquee.list.length}}" interval="{{marquee.interval}}" duration="{{marquee.duration}}">
+						        <div repeat={{marquee.list}} style="height: {{marquee.height * marquee.length}}; padding-top: {{marquee.height * 0.5}}; padding-bottom: {{marquee.height * 0.5}}; overflow: hidden;">
+						          <text style="height: {{marquee.height}}; color: rgb(60, 118, 61); font-size: 28;">{{text}}</text>
+						        </div>
+						      </wxc-marquee>
+						</div>
+					</div>
+				</div>
+				<div class="newopen" style="flex-direction:row; height: 200;">
+					<div repeat='{{tableitems}}' style="flex-direction:row;justify-content: center;align-items: center;flex: 1;">
+						<div style="justify-content:center; align-items:center;">
+							<text style='margin-top: 20;color: #666;'>{{name}}</text>
+							<image style='width:90;height:90;margin-top: 10;' src='{{icon}}'></image>
+						</div>
+						<!-- <div style="background-color: #f6f7f8; width: 10; height: 200"></div> -->
+					</div>
+				</div>
+				<div style="height: 20;background-color: {{linecolor}}"></div>
+				<div class="guess" style="height: 60;align-items: center;flex-direction: row;">
+					<div style="background-color: green; height: 30; width: 10"></div>
+					<text style='color: #393939; margin-left: 20'>猜你喜欢</text>
+				</div>
+				<small-line></small-line>
+				<div class="guesslist" style="height: 200;justify-content: center;flex-direction: row;">
+					<div style="flex:0.4; justify-content: center;align-items: center;">
+						<image style='width: 150; height: 150;' src='{{housview}}'></image>
+					</div>
+					<div style='height: 200;flex:1;'>
+						<text style='color: #333;margin-top: 20;'>城市一品苑</text>
+						<div style="flex-direction: row;align-items: center;justify-content: flex-start;">
+							<text style='font-size: 25;color: #999'>普陀 - 长风</text>
+							<text style='font-size: 25;color: #ff0000;margin-left: 20;'>100000元/平方</text>
+						</div>
+						<div style="flex-direction: row;">
+							<div repeat='{{houselable}}' style="justify-content: center;align-items: center;">
+								<text style='margin-right: 10;border-radius: 5;border-color: #f6f7f8;border-width: 2;padding: 5; font-size: 20;color: #999'>{{title}}</text>
+							</div>
+						</div>
+						<div style="flex-direction: row;">
+							<text style='font-size: 25; color: #fff; background-color: green;padding: 2;margin-top: 10;'>看</text>
+							<text style='font-size: 25; color: green;margin-left: 20;margin-top: 10;'>免费专车，随时看房</text>
+						</div>
+					</div>
+				</div>
+			</div>
+		</scroller>
+</template>
+
+<script>
+	require('weex-components');
+	var iconapi = require('./js/iconapi.js');
+	module.exports={
+		data:{
+			searchicon:iconapi.iconurl.resurl+'id=1202802&size=48',
+			scanicon:iconapi.iconurl.resurl+'id=1177640&size=48',//id=1206276&size=48
+			items:[
+				{data:[
+					{name:'新房',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/6343/d12.png'},
+					{name:'二手房',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/6343/d13.png'},
+					{name:'租房',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/6343/d5.png'},
+					{name:'商铺写字楼',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/4876/79.png'}]},
+				{data:[
+					{name:'卖房',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/4876/65.png'},
+					{name:'海外地产',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/4876/71.png'},
+					{name:'帮你找房',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/4876/75.png'},
+					{name:'小区房价',icon:'http://pics.sc.chinaz.com/Files/pic/icons128/4876/66.png'}]}
+				],
+			ajkurl:'http://pages.ajkcdn.com/site/img/global/2/header/new_logo_110x32.png',
+			marquee: {
+		        height: 40,
+		        duration: 1500,
+		        interval: 2000,
+		        list: [
+		          {text: '一笔经济帐：当房租超过月供 你该...'},
+		          {text: '房企造镇 突围三四线城市'},
+		          {text: '2016年经济发展回眸：供给侧，改革攻坚见实效'},
+		          {text: '王石：“凡是要超万科的，下场都不太好”'},
+		          {text: '【预售周一见】上海12.05-12.11预售证信息播报'},
+		          {text: '碧桂园浦东星作 大品牌匠心作'}
+		        ]
+		      },
+		      tableitems:[
+		      	{name:'独家优惠', icon:'http://pics.sc.chinaz.com/Files/pic/icons128/6107/1s.png'},
+		      	{name:'免费看房', icon:'http://pics.sc.chinaz.com/Files/pic/icons128/1418/chinaz1.png'},
+		      	{name:'金融贷款', icon:'http://pics.sc.chinaz.com/Files/pic/icons128/4024/28.png'},
+		      	{name:'智能买房', icon:'http://pics.sc.chinaz.com/Files/pic/icons128/3322/home-1.png'},
+		      ],
+		      linecolor:iconapi.appconfig.linecolor,
+		      houselable:[
+		      	{title:'即将开盘'},
+		      	{title:'内环'},
+		      	{title:'品牌开发商'},
+		      	{title:'不限购'}
+		      ],
+		      housview:'http://pic1.ajkimg.com/display/xinfang/6b405e750da5db2769a0bee1a4c9b861/245x160m.jpg'
+		},
+		methods:{
+	      initMarquee: function(id) {
+	        var self = this;
+
+	        var $marquee = this.$vm(id);
+	        $marquee.$on('change', function() {
+	          console.log('marquee change');
+	        });
+	      }
+		},
+		// 初始化时候
+		created:function(){
+			console.log(iconapi.iconurl.resurl+'id=1202802&size=48');
+		},
+		// 初始化完毕
+		ready:function(){
+			this.initMarquee('marquee');
+		}
+	};
+</script>
+
+<style>
+	.navication,.tab,.guess,.newopen,.guesslist{
+		font-size: 32;
+	}
+</style>

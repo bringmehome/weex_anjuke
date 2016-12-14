@@ -1,0 +1,289 @@
+<!-- style -->
+<style>
+  .div-box{
+    background-color: #ffffff;
+  }
+  .button-box{
+    flex-direction:row;
+    justify-content:space-between;
+  }
+  .title{
+    font-size: 30px;
+    line-height: 60px;
+    color: #FF0000;
+    padding: 8px;
+    font-weight: bold;
+  }
+  .ey-start-btn{
+    line-height: 60px;
+    background-color: #54ca6d;
+    color: #fff;
+  }
+  .ey-stop-btn{
+    line-height: 60px;
+    background-color: #5473ca;
+    color: #fff;
+  }
+</style>
+<!-- body -->
+<template>
+  <div>
+    <!-- <container class="div-box"> -->
+    <div class="div-box">
+    <br>
+      <div class="title">
+        <text>给设备配网</text>
+      </div>
+      <div class="button-box">
+        <div>
+          <text class="ey-stop-btn" onclick="getSsid">getSSID</text>
+        </div>        
+        <div>
+          <text class="ey-start-btn" onclick="startEasyLink">开始配网</text>
+        </div>
+        <div>
+          <text class="ey-stop-btn" onclick="stopEasyLink">停止配网</text>
+        </div>
+      </div>
+    </div>      
+    <div class="div-box">
+      <div class="title">
+        <text>mDNS部分</text>
+      </div>
+      <div class="button-box">
+        <div>
+          <text class="ey-start-btn" onclick="startSearchDevices">开始搜索设备</text>
+        </div>
+        <div>
+          <text class="ey-stop-btn" onclick="stopSearchDevices">停止搜索设备</text>
+        </div>
+      </div>
+    </div>    
+    <div class="div-box">
+      <div class="title">
+        <text>mDNS部分</text>
+      </div>
+      <div>
+        <text class="ey-start-btn" onclick="fogTest">FogTest接口</text>
+      </div>
+    </div>
+    <div class="div-box">
+      <div class="title">
+        <text>MQTT部分</text>
+      </div>
+      <div class="button-box">
+        <div>
+          <text class="ey-start-btn" onclick="startMqtt">startMqtt</text>
+        </div>      
+        <div>
+          <text class="ey-stop-btn" onclick="stopMqtt">stopMqtt</text>
+        </div>      
+        <div>
+          <text class="ey-start-btn" onclick="subscribe">subscribe</text>
+        </div>      
+        <div>
+          <text class="ey-stop-btn" onclick="unsubscribe">unsubscribe</text>
+        </div>      
+        <div>
+          <text class="ey-start-btn" onclick="publish(true)">publish开</text>
+        </div>
+        <div>
+          <text class="ey-stop-btn" onclick="publish(false)">publish关</text>
+        </div>
+      </div>
+    </div>
+    <!-- </container> -->
+  </div>
+</template>
+<!-- script -->
+<script>
+var fog;
+module.exports = {
+  methods: {
+    myUrl:function(){
+      var URLHelper = require('@weex-module/myURL');//same as you registered
+      URLHelper.openURL("http://www.taobao.com",function(ts){
+          console.log("url is open at ----- >>>>>  "+ts);
+      });
+    }, 
+    getSsid:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.getSsid(function(ret){
+        console.log(" js fog getssid----- ", ret.message);  
+        fog.toast(ret.message);
+      });
+    }, 
+    startEasyLink:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      console.log("fog", "start eas")
+      fog.startEasyLink({
+        ssid:"gg",
+        password:"00000000",
+        worktime:20000,
+        sleeptime:10,
+        extradata:"",
+        rc4key:""
+      },function(ts){
+        // 提取message
+          console.log(" ey fog startEasyLink----- ", JSON.stringify(ts));
+        // 将message字符串转为json
+          var message = JSON.parse(ts.message);
+        // 提取message中的message
+          console.log(" ey fog parseJSON----- ", JSON.stringify(message.message));
+      });
+    },
+    stopEasyLink:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.stopEasyLink(function(ret){
+          console.log(" ey fog stopEasyLink----- ", JSON.stringify(ret));
+      })
+    },
+    startSearchDevices:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.startSearchDevices("",function(ret){
+          var message = JSON.parse(ret.message);
+          console.log(" mdns fog ----- ", JSON.stringify(message));
+      });
+    },
+    stopSearchDevices:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.stopSearchDevices(function(ret){
+          console.log(" mdns fog ----- ", JSON.stringify(ret));
+      });
+    },  
+    startMqtt:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      console.log("fog", "start eas")
+      fog.startMqtt({
+        host:"api.easylink.io",
+        port:"1883",
+        username:"admin",
+        password:"admin",
+        topic:"d64f517c/c8934691813c/out/read",
+        clientid:"clientId-sin20160628",
+        isencrypt:false
+      },function(ts){
+        // 提取message
+          console.log(" fog only startMqtt----- ", JSON.stringify(ts));
+        // 将message字符串转为json
+          var message = JSON.parse(ts.message);
+        // 提取message中的message
+          // console.log(" fog startMqtt----- ", JSON.stringify(message.payload), JSON.stringify(message.topic));
+      });
+    },
+    stopMqtt:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.stopMqtt(function(ret){
+          console.log(" fog startMqtt----- ", JSON.stringify(ret));
+      });
+    },
+    subscribe:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.subscribe({
+        topic:"d64f517c/c8934691813c/in/write",
+        qos:0
+      },function(ret){
+          console.log(" fog startMqtt----- ", JSON.stringify(ret));
+      });
+    },
+    unsubscribe:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.unsubscribe({
+        topic:"d64f517c/c8934691813c/in/write"
+      },function(ret){
+          console.log(" fog startMqtt----- ", JSON.stringify(ret));
+      });
+    },
+    publish:function(command){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.publish({
+        topic:"d64f517c/c8934691813c/in/write",
+        command:'{\"4\":' + command + '}'
+      },function(ret){
+          console.log(" fog startMqtt----- ", JSON.stringify(ret));
+      });
+    },
+    fogTest:function(){
+      fog = require('@weex-module/fog');//same as you registered
+      fog.fogTest({
+        name:"toe",
+        age:20,
+        height:168,
+        isma:false
+      },function(ret){
+          console.log(" mdns fog ----- ", JSON.stringify(ret));
+      });
+    },  
+    stremobj:function(){
+          var arg1 = 'I am alert!'
+          var arg2 = 'I am ok'
+          var arg3 = 'I am cancel'
+          var modal = require('@weex-module/modal');
+          modal.confirm({
+            message: arg1,
+            okTitle: arg2,
+            cancelTitle: arg3
+          }, function(result) {
+            nativeLog(result)
+            // TODO after the confirm is complete.
+          });
+    },
+    fetchFunc:function(){
+          console.log("stream");
+          var stream = require('@weex-module/stream');
+          stream.fetch({
+            method: 'POST',
+            // url: 'http://192.168.3.186:8000/enduser/getVerCode/',
+            url: 'https://v2.fogcloud.io/enduser/getVerCode/',
+            type:'json',
+            body: JSON.stringify({
+              loginname:"88635653@qq.com",
+              // appid:"a94def5e-41b2-11e6-a4ef-f8cab81d2727"
+              appid:"db456b4a-17fc-11e6-a739-00163e0204c0"
+            }),
+            //android端会默认多了一个Content-Type: application/x-www-form-urlencoded
+            //所以这里需要添加 "Content-Type": "application/json"，但是添加后HTML服务器端收到body为空
+            //发送的json变为JSONString，则可以解决这个问题
+            headers:{
+              "Content-Type":"application/json"
+            }
+          }, function(response) {
+            console.log("res 1:"+JSON.stringify(response));
+          },function(response){
+            console.log("bytes received:"+response.length);
+          });
+
+          // stream.fetch({
+          //   method: 'POST',
+          //   url: 'http://www.easylink.io/v1/user/login',
+          //   type:'json',
+          //   body: {
+          //     login_id:"13122112211",
+          //     password:"123456"
+          //   },
+          //   headers:{
+          //     "X-Application-Id":"7ffbec46-7ff9-46fc-bb55-ec1dda89f40c"
+          //   }
+          // }, function(response) {
+          //   console.log("res 1:"+JSON.stringify(response));
+          //   //process response
+          // },function(response){
+          //   console.log("bytes received:"+response.length);
+          // });
+
+          // stream.fetch({
+          //   method: 'POST',
+          //   url: "http://httpbin.org/post",
+          //   type:'json',
+          //   body: {
+          //     a:1
+          //   }
+          // }, function(response) {
+          //   console.log("res response", JSON.stringify(response));
+          // },function(json){
+          //   console.log("res json", JSON.stringify(json));
+          // });
+        }
+  }
+};
+</script>
